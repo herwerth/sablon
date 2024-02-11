@@ -1,25 +1,56 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
-export class AppComponent {
-  elements = [
-    "Lorem ipsum dolor",
-    "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut",
-    "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-  ];
+export class AppComponent implements OnInit {
+  elements: string[] = [];
 
-  onSubmit(e:any){
-    e.preventDefault();
-    const newValue = e.target.elements.title.value;
-    this.elements.push(newValue);
-    e.target.reset();
+  loadingInProcess = false;
+
+  ngOnInit(): void {
+    this.elemekLekerdezese();
   }
-  elementDelete(i: number){
-    this.elements.splice(i,1);
 
+  elemekLekerdezese() {
+    this.loadingInProcess = true;
+    fetch('https://kodbazis.hu/api/cimek')
+      .then((res) => res.json())
+      .then((tartalom) => {
+        this.elements = tartalom;
+      })
+      .catch(() => {
+        alert('Hiba');
+      })
+      .finally(() => {
+        this.loadingInProcess = false;
+      });
+  }
+
+  elementDelete(i: number) {
+    this.loadingInProcess = true;
+    fetch('https://kodbazis.hu/api/cimek/' + i, { method: 'DELETE' }).then(
+      () => {
+        this.elemekLekerdezese();
+      }
+    );
+  }
+
+  onSubmit(e: any) {
+    e.preventDefault();
+    const ujErtek = e.target.elements.title.value;
+    this.loadingInProcess = true;
+    fetch('https://kodbazis.hu/api/cimek', {
+      method: 'POST',
+      body: JSON.stringify({
+        cim: ujErtek,
+      }),
+    }).then(() => {
+      this.elemekLekerdezese();
+    });
+
+    e.target.reset();
   }
 }

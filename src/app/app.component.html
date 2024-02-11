@@ -1,27 +1,27 @@
-<h1 *ngIf="elements.length > 0; else addElement">
-  A tömb hossza jelenleg {{ elements.length }} darab valami
-</h1>
-<ng-container *ngFor="let element of elements; index as i"  >
-
-  <span>{{ i + 1 }} {{ element }} </span>
-  <button (click)="elementDelete(i)">Törlés</button>
-  <hr />
-
+<ng-container *ngIf="loadingInProcess; else list">
+  Loading isn process...
 </ng-container>
-<ng-container
-  *ngIf="elements.length < 6; else maxElementCountHAsArchieved">
-<form
-  (submit)="onSubmit($event)"
->
-  <input name="title" />
-  <button type="submit">Hozzáadás</button>
-</form>
-</ng-container>
+<ng-template #list>
+  <h1 *ngIf="elements.length > 0; else addElement">
+    A tömb hossza jelenleg {{ elements.length }} darab valami
+  </h1>
+  <ng-container *ngFor="let element of elements; index as i">
+    <span>{{ i + 1 }} {{ element }} </span>
+    <button (click)="elementDelete(i)">Törlés</button>
+    <hr />
+  </ng-container>
+  <ng-container *ngIf="elements.length < 6; else maxElementCountHAsArchieved">
+    <form (submit)="onSubmit($event)">
+      <input name="title" />
+      <button type="submit">Hozzáadás</button>
+    </form>
+  </ng-container>
 
-<ng-template #maxElementCountHAsArchieved>
-  <h3>Max elemszám elérve</h3>
-</ng-template>
+  <ng-template #maxElementCountHAsArchieved>
+    <h3>Max elemszám elérve</h3>
+  </ng-template>
 
-<ng-template #addElement>
-  <h3>Adj hozzá elemeket!</h3>
+  <ng-template #addElement>
+    <h3>Adj hozzá elemeket!</h3>
+  </ng-template>
 </ng-template>
